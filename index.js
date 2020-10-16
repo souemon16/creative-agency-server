@@ -106,8 +106,8 @@ client.connect(err => {
       })
   })
 
-   // Get Reviews Datas from DB 
-   app.get('/review-list', (req, res) => {
+  // Get Reviews Datas from DB 
+  app.get('/review-list', (req, res) => {
     reviewCollection.find({})
       .toArray((err, docs) => {
         res.send(docs);
@@ -127,15 +127,16 @@ client.connect(err => {
     const description = req.body.description;
     const filePath = `${__dirname}/servicesImg/${file.name}`;
 
-    file.mv(filePath, err => {
-      if (err) {
-        console.log(err);
-        res.status(500).send({ msg: "Failed To Upload Image" })
-      }
-      return res.send({name: file.name, path: `/${file.name}`})
-    });
+    // file.mv(filePath, err => {
+    //   if (err) {
+    //     console.log(err);
+    //     res.status(500).send({ msg: "Failed To Upload Image" })
+    //   }
+    //   return res.send({name: file.name, path: `/${file.name}`})
+    // });
 
-    const newImg = fs.readFileSync(filePath);
+    // const newImg = fs.readFileSync(filePath);
+    const newImg = req.files.file.data;
     const encImg = newImg.toString('base64');
 
     const image = {
@@ -149,7 +150,7 @@ client.connect(err => {
         res.send(result.insertedCount > 0)
       });
   })
- 
+
 })
 
 // Admin Collection 
@@ -159,7 +160,7 @@ client.connect(err => {
   // Matching Admin
   app.post('/isAdmin', (req, res) => {
     const email = req.body.email;
-    adminCollection.find({ email: email})
+    adminCollection.find({ email: email })
       .toArray((err, admin) => {
         res.send(admin.length > 0);
       })
@@ -178,5 +179,5 @@ client.connect(err => {
 })
 
 
-// app.listen(process.env.PORT || port)
-app.listen(port);
+app.listen(process.env.PORT || port)
+// app.listen(port);
