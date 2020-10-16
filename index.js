@@ -24,6 +24,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+
+// For Order and Client Collection 
 client.connect(err => {
   const clientCollection = client.db("creativeAgency").collection("client");
 
@@ -61,6 +63,24 @@ client.connect(err => {
       });
   })
 
+  // Get Client Courses 
+  app.get('/course-list', (req, res) => {
+    clientCollection.find({email: req.query.email})
+        .toArray((err, documents) => {
+            res.send(documents);
+        })
+})
+
+  // Update Client Course Action 
+  app.patch('/update/:id', (req, res) => {
+    clientCollection.updateOne({ _id: ObjectId(req.params.id) },
+    {
+      $set: {action: req.body.status}
+    })
+    .then(result => {
+      console.log(result)
+    })
+  })
 
   // Get Client Datas from DB 
   app.get('/client-list', (req, res) => {
