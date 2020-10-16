@@ -36,38 +36,28 @@ client.connect(err => {
     const price = req.body.price;
     const filePath = `${__dirname}/clients/${file.name}`;
 
-    file.mv(filePath, err => {
-      if (err) {
-        console.log(err);
-        res.status(500).send({ msg: "Failed To Upload Image" })
-      }
-    });
-
-    const newImg = fs.readFileSync(filePath);
+    const newImg = file.data;
     const encImg = newImg.toString('base64');
 
     const image = {
       contentType: req.files.file.mimetype,
       size: req.files.file.size,
-      img: new Buffer.from(encImg, 'base64')
+      img: Buffer.from(encImg, 'base64')
     };
 
-    // const newClient = {
-    //   image: image,
-    //   name: name,
-    //   email: email,
-    //   course: course,
-    //   detail: detail,
-    //   price: price
-    // }
-    // console.log(newClient);
+    const newClient = {
+      image: image,
+      name: name,
+      email: email,
+      course: course,
+      detail: detail,
+      price: price
+    }
+    console.log(newClient);
 
-    clientCollection.insertOne({ name, email, image })
+    clientCollection.insertOne(newClient)
       .then(result => {
-        fs.remove(filePath, error => {
-          if (error) { console.log(error) }
-          res.send(result.insertedCount > 0)
-        })
+        res.send(result.insertedCount > 0);
       });
   })
 
@@ -92,6 +82,9 @@ client.connect(err => {
 
 });
 
+
+
+
 // For Collection Review
 client.connect(err => {
   const reviewCollection = client.db("creativeAgency").collection("review");
@@ -115,6 +108,10 @@ client.connect(err => {
   })
 
 })
+
+
+
+
 
 // For Collection Services 
 client.connect(err => {
@@ -153,6 +150,9 @@ client.connect(err => {
 
 })
 
+
+
+
 // Admin Collection 
 client.connect(err => {
   const adminCollection = client.db("creativeAgency").collection("admin");
@@ -180,4 +180,3 @@ client.connect(err => {
 
 
 app.listen(process.env.PORT || port)
-// app.listen(port);
